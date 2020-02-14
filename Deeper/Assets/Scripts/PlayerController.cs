@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float moveSpeed;
 
+    GameManager gameManager;
     Rigidbody2D rg;
 
     void Awake()
@@ -22,39 +21,39 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        rg.AddForce(Vector2.down * DropPower * Time.deltaTime, ForceMode2D.Impulse);
-        transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+        if (gameManager.gameState == GameState.Play)
+        {
+
+            rg.AddForce(Vector2.down * DropPower * Time.deltaTime, ForceMode2D.Impulse);
+            transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
 
 #if UNITY_EDITOR
-        if (Input.GetMouseButtonDown(0))
-        {
-            TouchScreen();
-        }
+            if (Input.GetMouseButtonDown(0))
+            {
+                TouchScreenAction();
+            }
 #else
-        if (Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            TouchScreen();
-        }
+            if (Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                TouchScreenAction();
+            }
 #endif
+        }
     }
 
     public void Init()
     {
+        gameManager = GameManager.Instance;
         rg = GetComponentInChildren<Rigidbody2D>();
-
     }
 
-    public void TouchScreen()
+    public void TouchScreenAction()
     {
-        Debug.Log("touch");
         AddForce();
     }
 
     public void AddForce()
     {
         rg.velocity = Vector2.up * UpPower;
-        //rg.velocity = Vector2.zero;
-        //rg.AddForce(Vector2.up * UpPower, ForceMode2D.Impulse);
-        //rg.AddForce(Vector2.up * UpPower);
     }
 }
